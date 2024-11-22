@@ -1,0 +1,126 @@
+<div class="calculator">
+    <div class="display" id="display">0</div>
+    <div class="buttons">
+        <button class="button clear" id="clear">C</button>
+        <button class="button operator" data-value="/">/</button>
+        <button class="button operator" data-value="*">*</button>
+        <button class="button operator" data-value="-">-</button>
+        <button class="button" data-value="7">7</button>
+        <button class="button" data-value="8">8</button>
+        <button class="button" data-value="9">9</button>
+        <button class="button operator" data-value="+">+</button>
+        <button class="button" data-value="4">4</button>
+        <button class="button" data-value="5">5</button>
+        <button class="button" data-value="6">6</button>
+        <button class="button equals" id="equals">=</button>
+        <button class="button" data-value="1">1</button>
+        <button class="button" data-value="2">2</button>
+        <button class="button" data-value="3">3</button>
+        <button class="button" data-value="0">0</button>
+        <button class="button" data-value=".">.</button>
+    </div>
+</div>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    html, body {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #222;
+        color: white;
+        font-family: Arial, sans-serif;
+    }
+    .calculator {
+        width: 100%;
+        height: 100%;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        gap: 10px;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+    .display {
+        background-color: #333;
+        color: #fff;
+        font-size: 2em;
+        padding: 20px;
+        text-align: right;
+        border-radius: 8px;
+        overflow: hidden;
+        white-space: nowrap;
+        overflow-x: auto;
+    }
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+    .button {
+        background-color: #444;
+        color: white;
+        font-size: 1.5em;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .button:hover {
+        background-color: #555;
+    }
+    .button:active {
+        background-color: #666;
+    }
+    .button.operator {
+        background-color: #f39c12;
+    }
+    .button.operator:hover {
+        background-color: #e67e22;
+    }
+    .button.equals {
+        background-color: #27ae60;
+        grid-column: span 2;
+    }
+    .button.clear {
+        background-color: #c0392b;
+        grid-column: span 2;
+    }
+</style>
+
+<script>
+    let display = document.getElementById("display");
+    let equation = "";
+
+    document.querySelectorAll(".button").forEach(button => {
+        button.addEventListener("click", (e) => {
+            const value = e.target.getAttribute("data-value") || e.target.id;
+
+            if (value === "clear") {
+                equation = "";
+                display.textContent = "0";
+            } else if (value === "equals") {
+                try {
+                    equation = eval(equation).toString();
+                    display.textContent = equation;
+                } catch {
+                    display.textContent = "Error";
+                }
+            } else {
+                if (display.textContent === "0" && value !== ".") {
+                    display.textContent = "";
+                }
+                equation += value;
+                display.textContent = equation;
+            }
+        });
+    });
+          </script>
