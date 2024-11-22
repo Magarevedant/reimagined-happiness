@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SeptOne - Home Screen</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <!-- Booting Screen -->
+  <div id="boot-screen" style="display: flex; justify-content: center; align-items: center; width: 100vw; height: 100vh; background-color: #000; color: white; font-size: 1.5em; flex-direction: column;">
+    <p>SeptOne OS is booting...</p>
+    <div class="loader"></div> <!-- Optional loader animation -->
+  </div>
+
+  <!-- Fullscreen Prompt Modal -->
+  <div id="fullscreen-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000;">
+    <p>For the best experience, please enter fullscreen mode.</p>
+    <button onclick="enterFullscreen()">Enter Fullscreen</button>
+  </div>
+
+  <!-- Wallpaper and Home Screen Icons -->
+  <div id="desktop" style="display: none;">
+    <div class="app-icon" onclick="openAppsModal()">
+      <img src="icons/apps.png" alt="Tasks Icon">
+      <span>Apps</span>
+    </div>
+    <div class="app-icon" onclick="launch_files()">
+      <img src="icons/files.png" alt="Calendar Icon">
+      <span>Files</span>
+    </div>
+    <div class="app-icon" onclick='launch_settings()'>
+      <img src="icons/settings.png" alt="Settings Icon">
+      <span>Settings</span>
+    </div>
+  </div>
+  
+  <!-- Optional Taskbar -->
+  <div id="taskbar" style="display: none;">
+    <span>SeptOne OS</span>
+    <div class="taskbar-icons">
+      <span>🕒</span> <!-- Placeholder clock -->
+      <span>🔋</span> <!-- Placeholder battery icon -->
+    </div>
+  </div>
+
+  <script src="js/winbox.bundle.min.js"></script>
+  <script src="js/coreone.js"></script>
+  <script src="js/script.js"></script>
+</body>
+</html>
