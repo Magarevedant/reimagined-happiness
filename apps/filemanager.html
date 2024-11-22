@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File Manager</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #21212d; color: #ffffff; }
+    #file-list { margin: 20px; padding: 10px; background-color: #333; border-radius: 8px; }
+    .file-item { padding: 8px; border-bottom: 1px solid #444; display: flex; justify-content: space-between; }
+    .file-item:last-child { border-bottom: none; }
+    .file-name { font-weight: bold; }
+    .file-action { color: #00bcd4; cursor: pointer; margin-left: 10px; }
+    #controls { margin: 20px; }
+    #controls input, #controls button { margin-right: 10px; }
+  </style>
+</head>
+<body>
+  <h2>File Manager</h2>
+  <div id="controls">
+    <input type="text" id="fileNameInput" placeholder="Enter file name">
+    <button onclick="createFile()">Create</button>
+    <button onclick="renameFile()">Rename</button>
+    <button onclick="deleteFile()">Delete</button>
+  </div>
+  <div id="file-list">
+    <p>Loading files...</p>
+  </div>
+  
+  <script src="/js/coreone.js"></script>
+  <script>
+      
+      CoreOne.fileSystem.createFile('/docs/new.txt', 'Hello, again!', (message) => {
+  console.log(message); // Logs success or error message
+});
+
+      
+    let selectedFile = null; // Track the selected file for rename/delete operations
+
+    // Function to load and display files
+    function loadFiles() {
+      const fileListContainer = document.getElementById('file-list');
+      fileListContainer.innerHTML = ''; // Clear previous content
+
+      if (CoreOne && CoreOne.fileSystem && typeof CoreOne.fileSystem.listFiles === 'function') {
+        CoreOne.fileSystem.listFiles('/', (files) => {
+          if (files && files.length > 0) {
+            files.forEach(file => {
+              const fileItem = document.createElement('div');
+              fileItem.classList.add('file-item');
+
+              const fileName = document.createElement('span');
+              fileName.classList.add('file-name');
+              fileName.textContent = file.name;
+
+              const fileActions = document.createElement('div');
+
+              const openAction = document.createElement('span');
+              openAction.classList.add('file-action');
+              openAction.textContent = 'Open';
+              openAction.onclick = () => openFile(file.path);
+
+              const selectAction = document.createElement('span');
+              selectAction.classList.add('file-action');
+              selectAction.textContent = 'Select';
+              selectAction.onclick = () => selectFile(file);
+
+              fileActions.appendChild(openAction);
+              fileActions.appendChild(selectAction);
+
+              fileItem.appendChild(fileName);
+              fileItem.appendChild(fileActions);
+              fileListContainer.appendChild(fileItem);
+            });
+          } else {
+            fileListContainer.innerHTML = '<p>No files found.</p>';
+          }
+        });
+      } else {
+        fileListContainer.innerHTML = '<p>Error loading file system.</p>';
+      }
+    }
+
+    // Select a file for rename/delete operations
+    function selectFile(file) {
+      selectedFile = file;
+      document.getElementById('fileNameInput').value = file.name;
+      alert(`Selected file: ${file.name}`);
+    }
+
+    // Create a new file
+    function createFile() {
+      console.log("creae called");
+      const fileName = document.getElementById('fileNameInput').value.trim();
+      console.log(fileName);
+      if (fileName) {
+      console.log("sending req");
+        CoreOne.fileSystem.createFile(fileName, 'Hello, again!', (message) => {
+  console.log("wow"); // Logs success or error message
+  loadFiles();
+});
+
+      } else {
+        alert('Please enter a file name.');
+      }
+    }
+
+    // Rename the selected file
+    function renameFile() {
+      const newFileName = document.getElementById('fileNameInput').value.trim();
+      if (selectedFile && newFileName) {
+        const oldPath = selectedFile.path;
+        const newPath = `/${newFileName}`;
+
+        CoreOne.fileSystem.readFile(oldPath, (content) => {
+          if (content !== null) {
+            // Create the file with the new name and delete the old file
+            CoreOne.fileSystem.createFile(newPath, content, (createMsg) => {
+              CoreOne.fileSystem.deleteFile(oldPath);
+              alert(createMsg + ' File renamed successfully.');
+              loadFiles(); // Refresh file list after renaming
+            });
+          } else {
+            alert('Error reading original file content.');
+          }
+        });
+      } else {
+        alert('Please select a file and enter a new name.');
+      }
+    }
+
+    // Delete the selected file
+    function deleteFile() {
+      if (selectedFile) {
+        CoreOne.fileSystem.deleteFile(selectedFile.path);
+        alert('File deleted successfully.');
+        loadFiles(); // Refresh file list after deleting
+      } else {
+        alert('Please select a file to delete.');
+      }
+    }
+
+    // Dummy function to open a file (for now)
+    function openFile(path) {
+      alert(`Opening file: ${path}`);
+    }
+
+    // Load files on page load
+    document.addEventListener("DOMContentLoaded", loadFiles);
+  </script>
+</body>
+</html>
